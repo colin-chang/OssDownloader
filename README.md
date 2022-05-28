@@ -34,9 +34,10 @@ cd ColinChang.OssDownloader && dotnet run
 根据实际配置替换以下`待下载文件`、`OSS配置`和`文件保存路径`后运行以下命令即可。
 ```bash
 docker run -it --rm \
--v $PWD/src.txt:/app/src.txt \  # 待下载文件
--v $PWD/appsettings.json:/app/appsettings.json \  # OSS配置
--v $PWD/downloads:/app/download \ # 文件保存路径
+-v $PWD/src.txt:/app/src.txt \
+-v $PWD/appsettings.json:/app/appsettings.json \
+-v $PWD/download:/app/download \
+-e MAX_TASK=5 \
 colinchang/ossdownloader
 ```
 
