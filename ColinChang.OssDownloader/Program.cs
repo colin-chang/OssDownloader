@@ -68,9 +68,26 @@ for (var i = 0; i < maxTask; i++)
             Console.WriteLine($"{filename} downloading");
             var dest = Path.Combine(savePath, filename);
             if (!File.Exists(dest))
-                oss.DownloadAsync(file, dest).Wait();
+            {
+                if (oss.ListObjectsAsync(file).Result.Any())
+                {
+                    try
+                    {
+                        oss.DownloadAsync(file, dest).Wait();
+                        Console.WriteLine($"{filename} downloaded");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"failed to download {filename}. {e.Message}");
+                    }
+                }
+                else
+                    Console.WriteLine($"{filename} does not exist");
+            }
+            else
+                Console.WriteLine($"{filename} downloaded");
 
-            Console.WriteLine($"{filename} downloaded");
+
             lock (locker)
             {
                 if (++downloaded >= lines.Count())
