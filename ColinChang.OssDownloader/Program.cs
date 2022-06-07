@@ -69,7 +69,7 @@ for (var i = 0; i < maxTask; i++)
             var dest = Path.Combine(savePath, filename);
             if (!File.Exists(dest))
             {
-                if (oss.ListObjectsAsync(file).Result.Any())
+                if (oss.ListObjectsAsync(file).Result.ObjectSummaries.Any())
                 {
                     try
                     {
