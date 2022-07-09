@@ -1,27 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Authors>Colin Chang</Authors>
+        <Copyright>https://ccstudio.com.cn</Copyright>
+        <PackageProjectUrl>https://github.com/colin-chang/OssDownloader</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/colin-chang/OssDownloader</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <PackageTags>aliyun oss sts policy callback download downloader</PackageTags>
+        <Description>this is a downloader for aliyun oss resources.</Description>
+        <PackageReleaseNotes>add events for downloading</PackageReleaseNotes>
+        <Version>1.0.0</Version>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageIconUrl>https://raw.githubusercontent.com/colin-chang/OssDownloader/main/icon.png</PackageIconUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>OssDownloader</Title>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
 
     <ItemGroup>
         <PackageReference Include="ColinChang.OssHelper" Version="1.2.5" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="6.0.0" />
     </ItemGroup>
 
-
     <ItemGroup>
-      <None Update="src.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Include="..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+        <None Include="..\icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
 </Project>
