@@ -67,58 +67,64 @@ public class Downloader : IDownloader
 
     public void DownloadBucket(string prefix = null,
         string marker = null,
-        int? maxKeys = null,
-        string delimiter = null)
+        string delimiter = null, bool skipPrefixObject = false)
     {
-        var r = _oss.ListObjectsAsync(prefix, marker, maxKeys, delimiter).Result;
-        //TODO:多线程分页下载
+        var locker = new object();
+        var done = false;
+        var ts = new List<Thread>();
+        for (var i = 0; i < _options.MaxTask; i++)
+        {
+            var thread = new Thread(() =>
+            {
+                while (!done)
+                {
+                    string key;
+                    lock (locker)
+                    {
+                        if (done)
+                            break;
 
-        // Console.WriteLine("download started ...");
-        // var locker = new object();
-        // var targets = _queue.Count;
-        //
-        // var downloaded = 0;
-        // for (var i = 0; i < _options.MaxTask; i++)
-        // {
-        //     new Thread(() =>
-        //     {
-        //         while (!_queue.IsEmpty)
-        //         {
-        //             if (!_queue.TryDequeue(out var file))
-        //                 continue;
-        //
-        //             var filename = Path.GetFileName(file);
-        //             Console.WriteLine($"{filename} downloading");
-        //             var dest = Path.Combine(_options.SavePath, filename);
-        //             if (!File.Exists(dest))
-        //             {
-        //                 if (_oss.ListObjectsAsync(file).Result.ObjectSummaries.Any())
-        //                 {
-        //                     try
-        //                     {
-        //                         _oss.DownloadAsync(file, dest).Wait();
-        //                         Console.WriteLine($"{filename} downloaded");
-        //                     }
-        //                     catch (Exception e)
-        //                     {
-        //                         Console.WriteLine($"failed to download {filename}. {e.Message}");
-        //                     }
-        //                 }
-        //                 else
-        //                     Console.WriteLine($"{filename} does not exist");
-        //             }
-        //             else
-        //                 Console.WriteLine($"{filename} downloaded");
-        //
-        //
-        //             lock (locker)
-        //             {
-        //                 if (++downloaded >= targets)
-        //                     Console.WriteLine("download finished");
-        //             }
-        //         }
-        //     }).Start();
-        // }
+                        var obj = _oss.ListObjectsAsync(prefix, marker, 1).Result;
+                        if (!obj.IsTruncated)
+                            done = true;
+
+                        if (!obj.ObjectSummaries.Any())
+                            continue;
+
+                        marker = obj.NextMarker;
+                        key = obj.ObjectSummaries.FirstOrDefault().Key;
+                    }
+
+                    if (skipPrefixObject && string.Equals(key, prefix))
+                        continue;
+
+                    var filename = Path.GetFileName(key);
+                    Console.WriteLine($"{filename} downloading");
+                    var dest = Path.Combine(_options.SavePath, filename);
+                    if (!File.Exists(dest))
+                    {
+                        try
+                        {
+                            _oss.DownloadAsync(key, dest).Wait();
+                            Console.WriteLine($"{filename} downloaded");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"failed to download {filename}. {e.Message}");
+                        }
+                    }
+                    else
+                        Console.WriteLine($"{filename} downloaded");
+                }
+            }) { IsBackground = true };
+            ts.Add(thread);
+            thread.Start();
+        }
+
+        foreach (var t in ts)
+            t.Join();
+        Stopped?.Invoke(this, EventArgs.Empty);
+        Console.WriteLine("all done");
     }
 
     private void Download()

@@ -1,5 +1,4 @@
-﻿using System;
-using ColinChang.OssDownloader;
+﻿using ColinChang.OssDownloader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +12,7 @@ var downloader = new ServiceCollection()
     .BuildServiceProvider()
     .GetRequiredService<IDownloader>();
 
-downloader.Download("src.txt");
-// downloader.DownloadBucket("test");
+// downloader.Download("src.txt");
+downloader.DownloadBucket("dev/apps/", skipPrefixObject: true);
+
 Console.ReadKey();

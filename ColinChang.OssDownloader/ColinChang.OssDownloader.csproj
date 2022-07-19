@@ -9,8 +9,8 @@
         <RepositoryType>Git</RepositoryType>
         <PackageTags>aliyun oss sts policy callback download downloader</PackageTags>
         <Description>this is a downloader for aliyun oss resources.</Description>
-        <PackageReleaseNotes>add events for downloading</PackageReleaseNotes>
-        <Version>1.0.0</Version>
+        <PackageReleaseNotes>add DownlaodBucket</PackageReleaseNotes>
+        <Version>1.1.0</Version>
         <PackageIcon>icon.png</PackageIcon>
         <PackageIconUrl>https://raw.githubusercontent.com/colin-chang/OssDownloader/main/icon.png</PackageIconUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
